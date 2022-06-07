@@ -1,0 +1,45 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <LiquidCrystal.h>
+// Data output of DS18B20 is connected to Arduino digital pin 2
+#define ONE_WIRE_BUS 2
+// Setting a one wire instance
+OneWire oneWire(ONE_WIRE_BUS);
+// Passing onewire instance to Dallas Temperature sensor library
+DallasTemperature sensors(&oneWire);
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);        // Arduino lcd sheild pins defined
+void setup() {
+  lcd.begin(16, 2);                        // Initialize the 16x2 lcd sheild
+  lcd.setCursor(0, 0);
+  lcd.print("  Welcome  ");
+  lcd.setCursor(0, 1);
+  lcd.print("Press Right Key to Start");
+  Serial.begin(9600);
+  int x;
+  x = analogRead (0);
+  
+  sensors.begin();                        // Begin the DS18B20 initialization
+  
+}
+void loop() {
+  int x;
+  x = analogRead (0);
+   while (x < 100) {
+  int Celsius = 0, Fahrenheit = 0; //Variables to store temperature readings from DS18B20 temperature sensor
+  sensors.requestTemperatures(); //Call all sensors on one wire to start calculating the temperature readings
+  Celsius = sensors.getTempCByIndex(0); //Get temperature reading from sensor 0 in celsius scale
+  Fahrenheit = sensors.getTempFByIndex(0); //Get temperature reading from sensor 0 in fahrenheit scale
+  lcd.setCursor(0, 0);      // Place the lcd cursor on Row-1 Coulomb-1
+  lcd.print("C: ");         // Print Celsius temperature on first row of lcd
+  lcd.print(Celsius);
+  lcd.print("                     ");
+  lcd.setCursor(0, 1);      // Place the lcd cursor on Row-2 Coulomb-1
+  lcd.print("F: ");         // Print Fahrenheit temperature on second row of lcd
+  lcd.print(Fahrenheit);
+  lcd.print("                     ");
+                             // Gives the temp values in serial along with the timestamp
+  Serial.println(Celsius);
+  delay(1000);              //Refresh the temperature readings after every 15 seconds
+   }
+   
+}
